@@ -1,3 +1,5 @@
+from uuid import UUID
+
 import flask_rebar
 from flask_rebar import errors
 
@@ -25,7 +27,7 @@ def create_account():
 @registry.handles(
     rule="/accounts/<uuid:account_id>", method="GET", marshal_schema=AccountSchema()
 )
-def get_account(account_id: str):
+def get_account(account_id: UUID):
     account = Account.query.filter_by(id=account_id).first()
     if account is None:
         raise errors.NotFound()
@@ -38,7 +40,7 @@ def get_account(account_id: str):
     method="PUT",
     request_body_schema=CreateAccountSchema(),
 )
-def replace_account(account_id: str):
+def replace_account(account_id: UUID):
     body = flask_rebar.get_validated_body()
 
     account = Account.query.filter_by(id=account_id).update(body)
@@ -50,7 +52,7 @@ def replace_account(account_id: str):
 
 
 @registry.handles(rule="/accounts/<uuid:account_id>", method="DELETE")
-def delete_account(account_id: str):
+def delete_account(account_id: UUID):
     account = Account.query.filter_by(id=account_id).first()
     if account is None:
         raise errors.NotFound()
